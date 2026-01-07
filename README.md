@@ -1,10 +1,102 @@
-# 📱 Agente Copilot – Desarrollo App Móvil Moto-Taxi
+# 🏍️ MotoDriver - Aplicación Móvil para Moto-Taxistas
 
-Este documento define las **instrucciones de comportamiento del agente** y el **prompt inicial de trabajo** para desarrollar la aplicación móvil de moto-taxistas.
+Aplicación móvil desarrollada con **React Native + TypeScript + Expo** para facilitar la gestión de carreras por parte de moto-taxistas.
+
+## 🚀 Inicio Rápido
+
+```bash
+# Instalar dependencias
+npm install
+
+# Iniciar la aplicación
+npm start
+```
+
+📖 **[Ver Guía de Inicio Completa](./QUICKSTART.md)**
+
+## 📱 Características
+
+✅ **Autenticación Segura**
+- Login con validación de credenciales
+- Manejo de errores y estados de carga
+
+✅ **Gestión de Carreras**
+- Lista de carreras disponibles ordenadas por proximidad
+- Actualización en tiempo real
+- Detalles completos de cada carrera
+
+✅ **Notificaciones Inteligentes**
+- Alertas para carreras cercanas (≤1km)
+- Solo para conductores activos
+- Aceptar/rechazar desde la notificación
+
+✅ **Control de Estado**
+- Cambio dinámico entre: Activo, Inactivo, En ruta, En carrera
+- Header con información del conductor
+
+✅ **Validación de Seguridad**
+- Sistema OTP para iniciar carreras
+- Verificación del código del cliente
+
+## 🏗️ Arquitectura
+
+- **Framework**: Expo + React Native
+- **Lenguaje**: TypeScript
+- **Navegación**: React Navigation
+- **Estado**: React Context API
+- **Patrón**: Clean Architecture
+
+📖 **[Ver Documentación Técnica Completa](./ARCHITECTURE.md)**
+
+## 📂 Estructura del Proyecto
+
+```
+src/
+├── components/     # Componentes reutilizables (Button, Input, etc.)
+├── contexts/       # Estado global con React Context
+├── models/         # Tipos TypeScript (Driver, Ride, Client)
+├── navigation/     # Configuración de rutas
+├── screens/        # Pantallas principales (Login, Rides, Current)
+├── services/       # Mock API (listo para backend real)
+└── utils/          # Helpers y formatters
+```
+
+## 🎯 Pantallas
+
+### 1. Login
+- Formulario con validación
+- Feedback de errores
+- Estados de carga
+
+### 2. Carreras Disponibles
+- Header con info del conductor
+- Selector de estado
+- Lista ordenada por distancia
+- Overlay con carrera seleccionada
+- Notificaciones popup
+
+### 3. Carrera Actual
+- Información del cliente
+- Detalles origen/destino
+- Validación OTP
+- Iniciar carrera
+
+## 🧪 Datos de Prueba
+
+**Login (mock):**
+- Email: cualquier email válido
+- Password: mínimo 6 caracteres
+
+**OTP:** `1234` (para todas las carreras)
+
+## 📚 Documentación
+
+- **[QUICKSTART.md](./QUICKSTART.md)** - Guía de inicio rápido
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Arquitectura y decisiones técnicas
 
 ---
 
-## 1️⃣ Instrucciones para el Agente (Agent Instructions)
+## 📋 Instrucciones para Agentes (Agent Instructions)
 
 ### 🎯 Objetivo principal
 Desarrollar una **aplicación móvil para moto-taxistas**, que funcione como interfaz de aceptación y gestión de carreras solicitadas por clientes a través de bots de WhatsApp y Telegram, comunicándose con un backend central.
