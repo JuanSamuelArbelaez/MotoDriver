@@ -2,10 +2,10 @@
 
 ## 📋 Requisitos Previos
 
-- Node.js (v16 o superior)
-- npm o yarn
-- Expo Go app (para probar en dispositivo móvil)
-- Android Studio o Xcode (para emuladores, opcional)
+- Android Studio Hedgehog (2023.1.1) o superior
+- JDK 17
+- Android SDK 34
+- Dispositivo Android o emulador (API 26+)
 
 ## 🚀 Instalación
 
@@ -15,52 +15,42 @@ git clone https://github.com/JuanSamuelArbelaez/MotoDriver.git
 cd MotoDriver
 ```
 
-### 2. Instalar dependencias
-```bash
-npm install
-```
+### 2. Abrir en Android Studio
+1. Abre Android Studio
+2. Selecciona "Open an existing project"
+3. Navega a la carpeta del proyecto y selecciónala
+4. Espera a que Gradle sincronice las dependencias
 
-### 3. Iniciar el proyecto
+### 3. Compilar el proyecto
 ```bash
-npm start
+# Desde la terminal
+./gradlew assembleDebug
+
+# O usar el menú Build > Make Project en Android Studio
 ```
 
 ## 📱 Ejecutar la Aplicación
 
-### Opción 1: En tu dispositivo móvil (Recomendado para desarrollo)
+### Opción 1: En emulador Android (Recomendado para desarrollo)
 
-1. Instala **Expo Go** desde:
-   - [Play Store (Android)](https://play.google.com/store/apps/details?id=host.exp.exponent)
-   - [App Store (iOS)](https://apps.apple.com/app/expo-go/id982107779)
+1. En Android Studio, abre AVD Manager (Tools > Device Manager)
+2. Crea un nuevo dispositivo virtual o selecciona uno existente
+3. Ejecuta la aplicación con el botón "Run" o `Shift + F10`
 
-2. Ejecuta:
-   ```bash
-   npm start
-   ```
+### Opción 2: En dispositivo físico
 
-3. Escanea el código QR:
-   - **Android**: Usa la app Expo Go
-   - **iOS**: Usa la cámara del iPhone
+1. Habilita "Opciones de desarrollador" en tu dispositivo Android
+2. Activa "Depuración USB"
+3. Conecta el dispositivo por USB
+4. Ejecuta la aplicación desde Android Studio
 
-### Opción 2: En emulador Android
+### Opción 3: Desde línea de comandos
 ```bash
-npm run android
-```
-*Requiere Android Studio y un emulador configurado*
+# Instalar en dispositivo/emulador conectado
+./gradlew installDebug
 
-### Opción 3: En simulador iOS (Solo Mac)
-```bash
-npm run ios
-```
-*Requiere Xcode instalado*
-
-### Opción 4: En navegador web
-```bash
-# Instalar dependencias web primero
-npx expo install react-dom react-native-web
-
-# Iniciar en web
-npm run web
+# Iniciar la app
+adb shell am start -n com.motodriver.app/.MainActivity
 ```
 
 ## 🧪 Probar la Aplicación
@@ -76,11 +66,11 @@ La aplicación usa datos mock, puedes iniciar sesión con:
 
 1. **Login**
    - Ingresa un email válido y contraseña (min 6 caracteres)
-   - Click en "Iniciar sesión"
+   - Toca "Iniciar sesión"
 
 2. **Carreras Disponibles**
    - Verás 3 carreras mock ordenadas por distancia
-   - Cambia tu estado usando los botones en el header
+   - Cambia tu estado usando los chips en el header
    - Selecciona diferentes carreras de la lista
    - El overlay inferior se actualiza con los detalles
    - Si tu estado es "Activo", verás una notificación popup después de 5 segundos
@@ -92,65 +82,78 @@ La aplicación usa datos mock, puedes iniciar sesión con:
    - Puedes Aceptar o Rechazar
 
 4. **Aceptar Carrera**
-   - Click en "Aceptar carrera" en el overlay
+   - Toca "Aceptar carrera" en el overlay
    - Serás redirigido a la pantalla de Carrera Actual
 
 5. **Carrera Actual**
    - Verás información del cliente
    - Detalles de origen y destino
    - Ingresa el OTP: `1234` (mock)
-   - Click en "Validar código"
-   - Una vez validado, click en "Iniciar carrera"
+   - Toca "Validar código"
+   - Una vez validado, toca "Iniciar carrera"
 
 ### Datos Mock Disponibles
 
 #### Carreras
-- **Carrera 1**: Calle 72 → Carrera 7 (0.5km, $8,500)
-- **Carrera 2**: Carrera 15 → Avenida 68 (1.2km, $12,000)
-- **Carrera 3**: Calle 100 → Calle 26 (2.5km, $15,000)
-
-#### OTPs
-- Todas las carreras tienen OTP: `1234`
+- **Carrera 1**: Calle 72 → Carrera 7 (0.5km, $8,500) - OTP: 1234
+- **Carrera 2**: Carrera 15 → Avenida 68 (1.2km, $12,000) - OTP: 5678
+- **Carrera 3**: Calle 100 → Calle 26 (2.5km, $15,000) - OTP: 9012
 
 ## 🛠️ Comandos Útiles
 
 ### Desarrollo
 ```bash
-# Iniciar en modo desarrollo
-npm start
+# Compilar debug
+./gradlew assembleDebug
 
-# Limpiar cache de Metro bundler
-npm start -- --clear
+# Compilar release
+./gradlew assembleRelease
 
-# Ver logs del dispositivo
-npm start -- --dev-client
+# Limpiar proyecto
+./gradlew clean
+
+# Limpiar y recompilar
+./gradlew clean assembleDebug
 ```
 
-### Verificación de Código
+### Testing
 ```bash
-# Verificar TypeScript
-npx tsc --noEmit
+# Ejecutar tests unitarios
+./gradlew test
 
-# Ver estructura del proyecto
-tree src/ -L 2
+# Ejecutar tests instrumentados
+./gradlew connectedAndroidTest
+```
+
+### Verificación
+```bash
+# Verificar lint
+./gradlew lint
+
+# Ver dependencias
+./gradlew app:dependencies
 ```
 
 ## 📂 Estructura del Proyecto
 
 ```
 MotoDriver/
-├── App.tsx                 # Punto de entrada principal
-├── src/
-│   ├── components/         # Componentes reutilizables
-│   ├── contexts/          # React Contexts (estado global)
-│   ├── models/            # Tipos y modelos de datos
-│   ├── navigation/        # Configuración de navegación
-│   ├── screens/           # Pantallas principales
-│   ├── services/          # Servicios (API mock)
-│   └── utils/             # Utilidades
-├── assets/                # Imágenes e iconos
-├── ARCHITECTURE.md        # Documentación técnica detallada
-└── package.json          # Dependencias
+├── app/
+│   ├── src/main/
+│   │   ├── java/com/motodriver/app/
+│   │   │   ├── data/           # Modelos y repositorio
+│   │   │   ├── ui/             # Composables y pantallas
+│   │   │   ├── viewmodel/      # ViewModels
+│   │   │   ├── MainActivity.kt
+│   │   │   └── MotoDriverApplication.kt
+│   │   ├── res/                # Recursos (strings, colores, etc.)
+│   │   └── AndroidManifest.xml
+│   └── build.gradle.kts        # Dependencias del módulo
+├── gradle/
+├── build.gradle.kts            # Configuración raíz
+├── settings.gradle.kts
+├── ARCHITECTURE.md             # Documentación técnica
+└── README.md                   # Documentación principal
 ```
 
 ## 🎨 Características Implementadas
@@ -177,8 +180,8 @@ MotoDriver/
 
 - [ ] Integración con backend real
 - [ ] WebSockets para actualizaciones en tiempo real
-- [ ] Mapas con rutas
-- [ ] Notificaciones push reales
+- [ ] Mapas con rutas (Google Maps)
+- [ ] Notificaciones push reales (FCM)
 - [ ] Historial de carreras
 - [ ] Perfil del conductor
 - [ ] Chat con cliente
@@ -186,37 +189,40 @@ MotoDriver/
 ## 📚 Documentación Adicional
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - Arquitectura y decisiones técnicas
-- [Expo Documentation](https://docs.expo.dev/)
-- [React Navigation](https://reactnavigation.org/)
+- [FEATURES.md](./FEATURES.md) - Lista completa de características
+- [DIAGRAMS.md](./DIAGRAMS.md) - Diagramas de flujo
+- [Android Developer Docs](https://developer.android.com/docs)
+- [Jetpack Compose Docs](https://developer.android.com/jetpack/compose)
 
 ## ❓ Solución de Problemas
 
-### Error: "Metro bundler no inicia"
-```bash
-# Limpiar cache
-npm start -- --clear
+### Error: "SDK location not found"
+Crea un archivo `local.properties` en la raíz del proyecto:
+```properties
+sdk.dir=/path/to/your/Android/Sdk
 ```
 
-### Error: "No se puede conectar al servidor"
-- Verifica que tu computadora y dispositivo estén en la misma red WiFi
-- Desactiva VPN o firewall temporalmente
-
-### Error de dependencias
+### Error: Gradle sync failed
 ```bash
-# Reinstalar node_modules
-rm -rf node_modules
-npm install
+# Limpiar cache de Gradle
+./gradlew --stop
+rm -rf ~/.gradle/caches
+./gradlew clean
 ```
 
-### Error en iOS Simulator
-- Asegúrate de tener Xcode actualizado
-- Ejecuta: `npx pod-install` (si hay carpeta ios/)
+### Error: Emulador no inicia
+- Verifica que tienes suficiente RAM (al menos 8GB recomendado)
+- Habilita la virtualización en BIOS (VT-x/AMD-V)
+- Actualiza HAXM o usa el emulador x86_64
+
+### Error: "minSdk version" incompatible
+La app requiere Android 8.0 (API 26) o superior. Asegúrate de que tu dispositivo o emulador cumpla este requisito.
 
 ## 🤝 Soporte
 
 Para preguntas o problemas:
 1. Revisa la documentación en `ARCHITECTURE.md`
-2. Verifica los logs en la terminal
+2. Verifica los logs en Logcat de Android Studio
 3. Contacta al equipo de desarrollo
 
 ## 📄 Licencia
