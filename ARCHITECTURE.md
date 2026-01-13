@@ -2,98 +2,120 @@
 
 ## 📋 Stack Tecnológico
 
-### Framework Principal
-- **Expo + React Native + TypeScript**
-  - Desarrollo cross-platform (iOS y Android)
-  - TypeScript para tipado fuerte y mejor mantenibilidad
-  - Expo facilita el desarrollo y despliegue
+### Plataforma
+- **Android Nativo con Kotlin**
+  - Desarrollo específico para Android
+  - Rendimiento óptimo y acceso completo a APIs del sistema
+  - Kotlin para código conciso y seguro
+
+### UI Framework
+- **Jetpack Compose**
+  - UI declarativa moderna
+  - Composición de componentes reutilizables
+  - Material Design 3 integrado
+  - Previews en tiempo real
+
+### Arquitectura
+- **MVVM (Model-View-ViewModel)**
+  - Separación clara de responsabilidades
+  - Testabilidad mejorada
+  - Soporte nativo con ViewModel de Jetpack
 
 ### Navegación
-- **React Navigation v6**
-  - Stack Navigator para flujo de pantallas
-  - Gestión de estado de navegación
+- **Navigation Compose**
+  - Navegación declarativa
+  - Type-safe arguments
   - Deep linking preparado
 
 ### Gestión de Estado
-- **React Context API**
-  - Context para estado global del conductor
-  - Hooks personalizados (`useDriver`)
-  - Simple y efectivo para el alcance actual
-
-### Almacenamiento
-- **AsyncStorage**
-  - Persistencia local de datos
-  - Tokens de autenticación
-  - Preferencias del usuario
-
-### Ubicación
-- **expo-location**
-  - Acceso a GPS del dispositivo
-  - Cálculo de distancias
-  - Tracking en tiempo real
+- **StateFlow + Compose State**
+  - Flujos reactivos con Kotlin Coroutines
+  - Integración nativa con Compose
+  - Lifecycle-aware
 
 ## 🏗️ Arquitectura del Proyecto
 
 ### Estructura de Carpetas
 
 ```
-src/
-├── components/          # Componentes reutilizables
-│   ├── Button.tsx
-│   ├── Input.tsx
-│   ├── DriverHeader.tsx
-│   ├── RideItem.tsx
-│   ├── RideOverlay.tsx
-│   └── NotificationPopup.tsx
-├── contexts/           # React Contexts
-│   └── DriverContext.tsx
-├── models/             # Modelos de datos y tipos
-│   ├── Driver.ts
-│   ├── Ride.ts
-│   ├── Client.ts
-│   └── index.ts
-├── navigation/         # Configuración de navegación
-│   └── AppNavigator.tsx
-├── screens/           # Pantallas principales
-│   ├── LoginScreen.tsx
-│   ├── AvailableRidesScreen.tsx
-│   └── CurrentRideScreen.tsx
-├── services/          # Servicios de API
-│   └── apiService.ts
-└── utils/             # Utilidades y helpers
-    └── formatters.ts
+app/src/main/java/com/motodriver/app/
+├── data/
+│   ├── model/              # Modelos de datos
+│   │   ├── Driver.kt       # Modelo de conductor
+│   │   ├── Ride.kt         # Modelo de carrera
+│   │   └── Client.kt       # Modelo de cliente
+│   └── repository/         # Capa de datos
+│       └── MotoDriverRepository.kt
+├── ui/
+│   ├── components/         # Composables reutilizables
+│   │   ├── MotoButton.kt
+│   │   ├── MotoInput.kt
+│   │   ├── DriverHeader.kt
+│   │   ├── RideItem.kt
+│   │   ├── RideOverlay.kt
+│   │   └── NotificationPopup.kt
+│   ├── navigation/         # Configuración de navegación
+│   │   ├── Screen.kt
+│   │   └── AppNavigation.kt
+│   ├── screens/            # Pantallas principales
+│   │   ├── LoginScreen.kt
+│   │   ├── AvailableRidesScreen.kt
+│   │   └── CurrentRideScreen.kt
+│   ├── theme/              # Tema de la aplicación
+│   │   ├── Color.kt
+│   │   └── Theme.kt
+│   └── utils/              # Utilidades
+│       └── Formatters.kt
+├── viewmodel/              # ViewModels
+│   ├── LoginViewModel.kt
+│   ├── AvailableRidesViewModel.kt
+│   └── CurrentRideViewModel.kt
+├── MainActivity.kt         # Activity principal
+└── MotoDriverApplication.kt
 ```
 
 ### Patrones de Diseño
 
-#### Clean Architecture
-- **Separación de capas**: UI → Lógica → Servicios
-- **Inyección de dependencias**: Contexts y Services
-- **Componentes reutilizables**: Máxima modularidad
+#### MVVM (Model-View-ViewModel)
+- **Model**: Modelos de datos y Repository
+- **View**: Composables y Screens
+- **ViewModel**: Lógica de presentación y estado
 
-#### Component-Based
-- Componentes funcionales con Hooks
-- Props tipadas con TypeScript
-- Composición sobre herencia
+#### Repository Pattern
+- Abstracción de fuente de datos
+- Mock data para desarrollo
+- Fácil migración a API real
+
+#### State Hoisting
+- Estado elevado a ViewModels
+- UI sin estado (stateless composables)
+- Flujo unidireccional de datos
 
 ## 🎨 Pantallas Implementadas
 
 ### 1. LoginScreen
-**Ruta**: `/Login`
+**Ruta**: `login`
 
 **Características**:
 - Formulario con validación
 - Estados de carga y error
-- Autenticación vía mock API
-- Diseño responsivo
+- Autenticación vía mock repository
+- Diseño responsivo con Material 3
 
-**Estados**:
-- Loading (durante autenticación)
-- Error (credenciales inválidas)
-- Success (redirige a AvailableRides)
+**Estados UI**:
+```kotlin
+data class LoginUiState(
+    val email: String = "",
+    val password: String = "",
+    val emailError: String = "",
+    val passwordError: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String = ""
+)
+```
 
 ### 2. AvailableRidesScreen
-**Ruta**: `/AvailableRides`
+**Ruta**: `available_rides`
 
 **Características**:
 - Header con información del conductor
@@ -107,16 +129,10 @@ src/
 - `DriverHeader`: Info del conductor y selector de estado
 - `RideItem`: Item de carrera en la lista
 - `RideOverlay`: Footer con detalles de carrera seleccionada
-- `NotificationPopup`: Modal para notificaciones
-
-**Funcionalidades**:
-- Auto-selección de la carrera más cercana
-- Actualización en tiempo real (simulada)
-- Notificaciones solo para conductores activos
-- Aceptar/Rechazar carreras
+- `NotificationPopup`: Dialog para notificaciones
 
 ### 3. CurrentRideScreen
-**Ruta**: `/CurrentRide/:rideId`
+**Ruta**: `current_ride/{rideId}`
 
 **Características**:
 - Información completa del cliente
@@ -147,10 +163,10 @@ AvailableRides ←→ CurrentRide
 
 ## 📡 Integración con Backend (Mock)
 
-### Servicios Implementados
+### Repository Implementado
 
-#### `apiService.ts`
-Mock service que simula llamadas al backend:
+#### `MotoDriverRepository.kt`
+Mock repository que simula llamadas al backend:
 
 - `login(email, password)`: Autenticación
 - `getAvailableRides()`: Lista de carreras disponibles
@@ -164,90 +180,88 @@ Mock service que simula llamadas al backend:
 
 Para conectar con un backend real:
 
-1. Reemplazar `apiService.ts` con llamadas HTTP reales
-2. Usar `fetch` o `axios` para requests
-3. Implementar WebSockets para actualizaciones en tiempo real
-4. Agregar manejo de tokens JWT
-5. Implementar refresh de tokens
+1. Agregar Retrofit o Ktor para HTTP requests
+2. Implementar Repository con llamadas reales
+3. Agregar manejo de tokens JWT
+4. Implementar WebSockets para actualizaciones en tiempo real
 
-Ejemplo:
-```typescript
-async login(email: string, password: string): Promise<Driver> {
-  const response = await fetch('https://api.motodriver.com/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
-  
-  if (!response.ok) throw new Error('Auth failed');
-  return await response.json();
+Ejemplo con Retrofit:
+```kotlin
+interface MotoDriverApi {
+    @POST("auth/login")
+    suspend fun login(@Body credentials: LoginRequest): Response<Driver>
+    
+    @GET("rides/available")
+    suspend fun getAvailableRides(): Response<List<Ride>>
+    
+    @POST("rides/{rideId}/accept")
+    suspend fun acceptRide(@Path("rideId") rideId: String): Response<Ride>
 }
 ```
 
 ## 🎯 Modelos de Datos
 
 ### Driver
-```typescript
-interface Driver {
-  id: string;
-  name: string;
-  phone: string;
-  vehiclePlate: string;
-  status: DriverStatus;
-  currentLocation?: Location;
-  rating?: number;
-}
+```kotlin
+data class Driver(
+    val id: String,
+    val name: String,
+    val phone: String,
+    val vehiclePlate: String,
+    val status: DriverStatus,
+    val currentLocation: Location? = null,
+    val rating: Double? = null
+)
 
-enum DriverStatus {
-  ACTIVE = 'Activo',
-  INACTIVE = 'Inactivo',
-  EN_ROUTE = 'En ruta',
-  IN_RIDE = 'En carrera',
+enum class DriverStatus(val displayName: String) {
+    ACTIVE("Activo"),
+    INACTIVE("Inactivo"),
+    EN_ROUTE("En ruta"),
+    IN_RIDE("En carrera")
 }
 ```
 
 ### Ride
-```typescript
-interface Ride {
-  id: string;
-  clientId: string;
-  originAddress: string;
-  destinationAddress: string;
-  originLocation: Location;
-  destinationLocation: Location;
-  estimatedAmount: number;
-  distanceFromDriver: number;
-  tripDistance: number;
-  status: RideStatus;
-  createdAt: Date;
-  otp?: string;
-}
+```kotlin
+data class Ride(
+    val id: String,
+    val clientId: String,
+    val originAddress: String,
+    val destinationAddress: String,
+    val originLocation: Location,
+    val destinationLocation: Location,
+    val estimatedAmount: Int,
+    val distanceFromDriver: Double,
+    val tripDistance: Double,
+    val status: RideStatus,
+    val createdAt: Date,
+    val otp: String? = null
+)
 ```
 
 ### Client
-```typescript
-interface Client {
-  id: string;
-  name: string;
-  phone: string;
-}
+```kotlin
+data class Client(
+    val id: String,
+    val name: String,
+    val phone: String
+)
 ```
 
 ## 🔔 Notificaciones
 
 ### Implementación Actual
 - Simulación de notificaciones in-app
-- Modal popup para carreras cercanas
+- Dialog popup para carreras cercanas
 - Solo para conductores con estado "Activo"
 - Distancia máxima: 1km
 
 ### Para Producción
 Implementar notificaciones push reales con:
-- **Expo Notifications**
 - **Firebase Cloud Messaging (FCM)**
 
 Configuración necesaria:
-1. Instalar `expo-notifications`
+1. Agregar dependencia de Firebase
 2. Configurar FCM en Firebase Console
 3. Implementar token registration
 4. Backend envía notificaciones push
@@ -261,13 +275,13 @@ Configuración necesaria:
   - Error: Rojo `#D32F2F`
   - Fondo: `#F5F5F5`
 
-- **Tipografía**: System fonts nativas
-- **Iconografía**: Emojis para prototipo (reemplazar con iconos reales)
+- **Tipografía**: Material Design 3 typography
+- **Componentes**: Material 3 components
 
 ### Interacciones
 - Feedback visual en todos los botones
 - Loading states en operaciones asíncronas
-- Mensajes de error claros
+- Mensajes de error claros con Toast
 - Confirmaciones para acciones críticas
 
 ## 🚀 Próximos Pasos
@@ -275,7 +289,7 @@ Configuración necesaria:
 ### Funcionalidades Pendientes
 
 1. **Mapas**
-   - Integrar Google Maps / Mapbox
+   - Integrar Google Maps SDK
    - Mostrar ruta origen-destino
    - Tracking en tiempo real
 
@@ -298,7 +312,7 @@ Configuración necesaria:
    - Documentos del vehículo
 
 6. **Optimizaciones**
-   - Caché de datos
+   - Caché de datos con Room
    - Offline mode
    - Optimización de batería
 
@@ -306,17 +320,14 @@ Configuración necesaria:
 
 ### Para Desarrollo
 ```bash
-# Iniciar en modo desarrollo
-npm start
+# Compilar el proyecto
+./gradlew assembleDebug
 
-# Probar en Android
-npm run android
+# Instalar en dispositivo/emulador
+./gradlew installDebug
 
-# Probar en iOS (requiere Mac)
-npm run ios
-
-# Probar en web
-npm run web
+# Ejecutar tests unitarios
+./gradlew test
 ```
 
 ### Credenciales de Prueba
@@ -324,20 +335,27 @@ npm run web
 - **Password**: cualquier texto (mínimo 6 caracteres)
 
 ### Datos Mock
-El servicio incluye 3 carreras de ejemplo con diferentes distancias y montos.
+El repository incluye 3 carreras de ejemplo con diferentes distancias y montos.
 
 ## 📦 Dependencias Principales
 
-```json
-{
-  "expo": "~54.0.31",
-  "react": "19.1.0",
-  "react-native": "0.81.5",
-  "@react-navigation/native": "^7.0.17",
-  "@react-navigation/stack": "^7.2.0",
-  "@react-native-async-storage/async-storage": "^2.1.0",
-  "expo-location": "^18.0.6",
-  "typescript": "~5.9.2"
+```kotlin
+dependencies {
+    // Core Android
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.activity:activity-compose:1.8.2")
+
+    // Compose
+    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material3:material3")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 }
 ```
 
@@ -346,14 +364,14 @@ El servicio incluye 3 carreras de ejemplo con diferentes distancias y montos.
 ### Implementado
 - Validación de formularios
 - OTP de 4 dígitos para iniciar carreras
-- TypeScript para prevención de errores
+- Kotlin null safety para prevención de errores
 
 ### Por Implementar
 - Tokens JWT con refresh
-- Encriptación de datos sensibles
+- Encriptación de datos sensibles con EncryptedSharedPreferences
 - Biometría (huella/Face ID)
-- Rate limiting en requests
-- Sanitización de inputs
+- Certificate pinning
+- ProGuard/R8 para ofuscación
 
 ## 📄 Licencia
 

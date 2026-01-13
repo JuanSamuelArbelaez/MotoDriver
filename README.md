@@ -1,15 +1,24 @@
-# 🏍️ MotoDriver - Aplicación Móvil para Moto-Taxistas
+# 🏍️ MotoDriver - Aplicación Android para Moto-Taxistas
 
-Aplicación móvil desarrollada con **React Native + TypeScript + Expo** para facilitar la gestión de carreras por parte de moto-taxistas.
+Aplicación Android nativa desarrollada con **Kotlin + Jetpack Compose** usando arquitectura **MVVM** para facilitar la gestión de carreras por parte de moto-taxistas.
 
 ## 🚀 Inicio Rápido
 
-```bash
-# Instalar dependencias
-npm install
+### Requisitos
+- Android Studio Hedgehog (2023.1.1) o superior
+- JDK 17
+- Android SDK 34
 
-# Iniciar la aplicación
-npm start
+### Compilar y Ejecutar
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/JuanSamuelArbelaez/MotoDriver.git
+cd MotoDriver
+
+# Abrir en Android Studio y sincronizar Gradle
+# O compilar desde línea de comandos:
+./gradlew assembleDebug
 ```
 
 📖 **[Ver Guía de Inicio Completa](./QUICKSTART.md)**
@@ -40,25 +49,31 @@ npm start
 
 ## 🏗️ Arquitectura
 
-- **Framework**: Expo + React Native
-- **Lenguaje**: TypeScript
-- **Navegación**: React Navigation
-- **Estado**: React Context API
-- **Patrón**: Clean Architecture
+- **Plataforma**: Android Nativo
+- **Lenguaje**: Kotlin
+- **UI Framework**: Jetpack Compose
+- **Arquitectura**: MVVM (Model-View-ViewModel)
+- **Navegación**: Jetpack Navigation Compose
+- **Estado**: StateFlow + Compose State
 
 📖 **[Ver Documentación Técnica Completa](./ARCHITECTURE.md)**
 
 ## 📂 Estructura del Proyecto
 
 ```
-src/
-├── components/     # Componentes reutilizables (Button, Input, etc.)
-├── contexts/       # Estado global con React Context
-├── models/         # Tipos TypeScript (Driver, Ride, Client)
-├── navigation/     # Configuración de rutas
-├── screens/        # Pantallas principales (Login, Rides, Current)
-├── services/       # Mock API (listo para backend real)
-└── utils/          # Helpers y formatters
+app/src/main/java/com/motodriver/app/
+├── data/
+│   ├── model/          # Modelos de datos (Driver, Ride, Client)
+│   └── repository/     # Repositorio con datos mock
+├── ui/
+│   ├── components/     # Composables reutilizables
+│   ├── navigation/     # Configuración de navegación
+│   ├── screens/        # Pantallas principales
+│   ├── theme/          # Tema y colores de la app
+│   └── utils/          # Funciones de utilidad
+├── viewmodel/          # ViewModels para cada pantalla
+├── MainActivity.kt     # Activity principal
+└── MotoDriverApplication.kt
 ```
 
 ## 🎯 Pantallas
@@ -87,12 +102,14 @@ src/
 - Email: cualquier email válido
 - Password: mínimo 6 caracteres
 
-**OTP:** `1234` (para todas las carreras)
+**OTP:** `1234` (para la primera carrera)
 
 ## 📚 Documentación
 
 - **[QUICKSTART.md](./QUICKSTART.md)** - Guía de inicio rápido
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Arquitectura y decisiones técnicas
+- **[FEATURES.md](./FEATURES.md)** - Lista de características
+- **[DIAGRAMS.md](./DIAGRAMS.md)** - Diagramas de flujo y arquitectura
 
 ---
 
@@ -147,12 +164,12 @@ El agente **solo debe desarrollar la app móvil**, incluyendo:
 ### 📲 Lineamientos técnicos
 El agente debe:
 
-- Proponer y justificar el **framework móvil** (Flutter o React Native preferido).
-- Mantener una **arquitectura limpia** (por ejemplo: Clean Architecture, MVVM).
+- Usar **Android Nativo con Kotlin y Jetpack Compose**.
+- Mantener una **arquitectura MVVM limpia**.
 - Separar claramente:
-  - UI
-  - Lógica de negocio
-  - Servicios de red
+  - UI (Composables)
+  - Lógica de negocio (ViewModels)
+  - Servicios de datos (Repository)
 - Usar **componentes reutilizables**.
 - Documentar decisiones técnicas relevantes.
 - Usar **mock data** cuando el backend aún no esté disponible.
@@ -184,84 +201,6 @@ El agente debe:
 - Evitar lógica acoplada a la UI.
 - Preferir tipado fuerte y validaciones claras.
 - Manejar errores y estados vacíos (sin carreras, error de red, etc).
-
----
-
-## 2️⃣ Prompt Inicial para el Agente
-
-### 🟢 Prompt de inicio
-
-> Actúa como un **desarrollador móvil senior**.  
-> Vamos a desarrollar una **aplicación móvil para moto-taxistas**.
->
-> ### Requerimientos funcionales:
->
-> #### Pantallas
->
-> **1. Login**
-> - Inicio de sesión con credenciales del moto-taxista.
-> - Manejo de errores y estados de carga.
->
-> **2. Carreras Disponibles**
-> - Header con:
->   - Datos del conductor
->   - Estado actual: Activo / Inactivo / En ruta / En carrera
->
-> - Lista central de carreras disponibles:
->   - Se actualiza en tiempo real cuando:
->     - Se agenda una carrera
->     - Se cancela
->     - Se acepta por otro conductor
->   - Ordenada por cercanía al punto de inicio.
->
-> - Cada item de carrera debe mostrar:
->   - Distancia desde el conductor
->   - Dirección de origen
->   - Monto estimado
->
-> **3. Overlay Footer (Carrera seleccionada)**
-> - Visible por defecto con la carrera más cercana.
-> - Muestra:
->   - Dirección origen
->   - Dirección destino
->   - Distancia del trayecto
->   - Botón para aceptar carrera
-> - Al seleccionar otra carrera en la lista:
->   - El overlay se actualiza con esa información.
->
-> **4. Notificación Pop-up**
-> - Cuando un cliente solicita una carrera:
->   - Moto-taxistas activos a ≤ 1 km reciben un pop-up
->   - El pop-up incluye:
->     - Mensaje de carrera cercana
->     - Botón Aceptar
->     - Botón Rechazar
-> - Moto-taxistas fuera del rango:
->   - Solo ven la carrera en la lista (sin pop-up).
->
-> **5. Carrera Actual**
-> - Se muestra al aceptar una carrera.
-> - Incluye:
->   - Información completa de la carrera
->   - Datos del cliente (nombre, teléfono)
->
-> - Paso de seguridad:
->   - Ingreso de OTP proporcionado al cliente por el bot
->   - Validación del OTP vía backend
->
-> - Al validar OTP:
->   - Se habilita el inicio de la carrera
->
-> ⚠️ La app NO incluye taxímetro ni cobros.
->
-> ---
->
-> ### Tareas iniciales:
-> 1. Proponer el stack tecnológico.
-> 2. Definir la arquitectura del proyecto.
-> 3. Diseñar la navegación entre pantallas.
-> 4. Crear los primeros mocks y modelos de datos.
-> 5. Implementar la UI base de las tres pantallas principales.
 
 ---
 
