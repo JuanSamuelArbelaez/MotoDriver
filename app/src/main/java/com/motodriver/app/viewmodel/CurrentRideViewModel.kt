@@ -1,6 +1,5 @@
 package com.motodriver.app.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.motodriver.app.data.model.Client
@@ -24,6 +23,12 @@ data class CurrentRideUiState(
     val successMessage: String = ""
 )
 
+/**
+ * ViewModel for the Current Ride screen.
+ * 
+ * Note: Repository is instantiated directly for simplicity with mock data.
+ * For production, consider using Hilt/Dagger for dependency injection.
+ */
 class CurrentRideViewModel(
     private val rideId: String,
     private val repository: MotoDriverRepository = MotoDriverRepository()

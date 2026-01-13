@@ -2,14 +2,21 @@ package com.motodriver.app.data.repository
 
 import com.motodriver.app.data.model.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
 /**
  * Mock repository for development
  * This simulates backend API calls with mock data
+ * 
+ * Note: Uses Mutex for thread-safe access to mutable mock data.
+ * In production, this would be replaced with actual API calls.
  */
 class MotoDriverRepository {
 
+    private val mutex = Mutex()
+    
     private var mockDriver = Driver(
         id = "1",
         name = "Juan Pérez",
@@ -102,14 +109,16 @@ class MotoDriverRepository {
      */
     suspend fun acceptRide(rideId: String): Result<Ride> {
         delay(800)
-        val ride = mockRides.find { it.id == rideId }
-        return if (ride != null) {
-            val index = mockRides.indexOf(ride)
-            val updatedRide = ride.copy(status = RideStatus.ACCEPTED)
-            mockRides[index] = updatedRide
-            Result.success(updatedRide)
-        } else {
-            Result.failure(Exception("Carrera no encontrada"))
+        return mutex.withLock {
+            val ride = mockRides.find { it.id == rideId }
+            if (ride != null) {
+                val index = mockRides.indexOf(ride)
+                val updatedRide = ride.copy(status = RideStatus.ACCEPTED)
+                mockRides[index] = updatedRide
+                Result.success(updatedRide)
+            } else {
+                Result.failure(Exception("Carrera no encontrada"))
+            }
         }
     }
 
@@ -118,11 +127,13 @@ class MotoDriverRepository {
      */
     suspend fun validateOtp(rideId: String, otp: String): Result<Boolean> {
         delay(500)
-        val ride = mockRides.find { it.id == rideId }
-        return if (ride != null && ride.otp == otp) {
-            Result.success(true)
-        } else {
-            Result.failure(Exception("OTP inválido"))
+        return mutex.withLock {
+            val ride = mockRides.find { it.id == rideId }
+            if (ride != null && ride.otp == otp) {
+                Result.success(true)
+            } else {
+                Result.failure(Exception("OTP inválido"))
+            }
         }
     }
 
@@ -131,14 +142,16 @@ class MotoDriverRepository {
      */
     suspend fun startRide(rideId: String): Result<Ride> {
         delay(500)
-        val ride = mockRides.find { it.id == rideId }
-        return if (ride != null) {
-            val index = mockRides.indexOf(ride)
-            val updatedRide = ride.copy(status = RideStatus.IN_PROGRESS)
-            mockRides[index] = updatedRide
-            Result.success(updatedRide)
-        } else {
-            Result.failure(Exception("Carrera no encontrada"))
+        return mutex.withLock {
+            val ride = mockRides.find { it.id == rideId }
+            if (ride != null) {
+                val index = mockRides.indexOf(ride)
+                val updatedRide = ride.copy(status = RideStatus.IN_PROGRESS)
+                mockRides[index] = updatedRide
+                Result.success(updatedRide)
+            } else {
+                Result.failure(Exception("Carrera no encontrada"))
+            }
         }
     }
 
@@ -160,8 +173,10 @@ class MotoDriverRepository {
      */
     suspend fun updateDriverStatus(status: DriverStatus): Result<Driver> {
         delay(500)
-        mockDriver = mockDriver.copy(status = status)
-        return Result.success(mockDriver)
+        return mutex.withLock {
+            mockDriver = mockDriver.copy(status = status)
+            Result.success(mockDriver)
+        }
     }
 
     /**
@@ -169,16 +184,18 @@ class MotoDriverRepository {
      */
     suspend fun getRide(rideId: String): Result<Ride> {
         delay(300)
-        val ride = mockRides.find { it.id == rideId }
-        return if (ride != null) {
-            Result.success(ride)
-        } else {
-            Result.failure(Exception("Carrera no encontrada"))
+        return mutex.withLock {
+            val ride = mockRides.find { it.id == rideId }
+            if (ride != null) {
+                Result.success(ride)
+            } else {
+                Result.failure(Exception("Carrera no encontrada"))
+            }
         }
     }
 
     /**
      * Get current driver
      */
-    fun getCurrentDriver(): Driver = mockDriver
+    suspend fun getCurrentDriver(): Driver = mutex.withLock { mockDriver }
 }

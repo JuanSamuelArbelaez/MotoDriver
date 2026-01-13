@@ -21,6 +21,12 @@ data class AvailableRidesUiState(
     val errorMessage: String = ""
 )
 
+/**
+ * ViewModel for the Available Rides screen.
+ * 
+ * Note: Repository is instantiated directly for simplicity with mock data.
+ * For production, consider using Hilt/Dagger for dependency injection.
+ */
 class AvailableRidesViewModel(
     private val repository: MotoDriverRepository = MotoDriverRepository()
 ) : ViewModel() {

@@ -112,7 +112,7 @@ fun DriverHeader(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    DriverStatus.entries.forEach { status ->
+                    DriverStatus.values().forEach { status ->
                         StatusChip(
                             status = status,
                             isSelected = driver.status == status,

@@ -19,6 +19,13 @@ data class LoginUiState(
     val errorMessage: String = ""
 )
 
+/**
+ * ViewModel for the Login screen.
+ * 
+ * Note: Repository is instantiated directly for simplicity with mock data.
+ * For production, consider using Hilt/Dagger for dependency injection
+ * to improve testability and allow for different repository implementations.
+ */
 class LoginViewModel(
     private val repository: MotoDriverRepository = MotoDriverRepository()
 ) : ViewModel() {

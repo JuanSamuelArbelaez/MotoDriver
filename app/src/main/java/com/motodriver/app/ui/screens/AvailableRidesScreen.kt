@@ -36,6 +36,8 @@ import com.motodriver.app.ui.theme.Grey900
 import com.motodriver.app.viewmodel.AvailableRidesViewModel
 import kotlinx.coroutines.delay
 
+// Note: PullToRefreshBox is an experimental Material3 API, but it provides
+// the best pull-to-refresh user experience for Compose. Monitor for stable release.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AvailableRidesScreen(
